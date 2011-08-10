@@ -40,19 +40,30 @@ module ActsAsGeocodable #:nodoc:
     write_inheritable_attribute :acts_as_geocodable_options, options
     class_inheritable_reader :acts_as_geocodable_options
 
-    define_callbacks :geocoding
+    if options[:through]
+      if reflection = self.reflect_on_association(options[:through])
+        key = reflection.primary_key_name
+      else
+        raise ArgumentError, "You gave #{association} in :through, but I could not find it on #{klass}."
+      end
+      geocodable_type = options[:through].to_s.classify
+    else
+      key = primary_key
+      geocodable_type = model_name
 
-    has_one :geocoding, :as => :geocodable, :include => :geocode, :dependent => :destroy
+      define_callbacks :geocoding
 
-    after_save :attach_geocode
+      has_one :geocoding, :as => :geocodable, :include => :geocode, :dependent => :destroy
+      after_save :attach_geocode
+    end
 
     # Would love to do a simpler scope here, like:
     # scope :with_geocode_fields, includes(:geocoding)
     # But we need to use select() and it would get overwritten.
     scope :with_geocode_fields, lambda {
       joins("JOIN geocodings ON
-          #{table_name}.#{primary_key} = geocodings.geocodable_id AND
-            geocodings.geocodable_type = '#{model_name}'
+          #{table_name}.#{key} = geocodings.geocodable_id AND
+            geocodings.geocodable_type = '#{geocodable_type}'
           JOIN geocodes ON geocodings.geocode_id = geocodes.id")
     }
 
