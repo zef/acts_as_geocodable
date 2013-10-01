@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe ActsAsGeocodable do
   before do
-    @white_house = Factory(:whitehouse)
-    @saugatuck = Factory(:saugatuck)
+    @white_house = FactoryGirl.create(:whitehouse)
+    @saugatuck = FactoryGirl.create(:saugatuck)
   end
   
   describe "geocode" do
@@ -221,23 +221,23 @@ describe ActsAsGeocodable do
     end
 
     it 'should calculate distance from a string' do
-      @san_francisco.distance_to(@saugatuck.geocode.query).should be_close(1927, 2)
+      @san_francisco.distance_to(@saugatuck.geocode.query).should be_within(2).of(1927)
     end
     it 'should calculate distance from a geocode' do
-      @san_francisco.distance_to(@saugatuck.geocode).should be_close(1927, 2)
+      @san_francisco.distance_to(@saugatuck.geocode).should be_within(2).of(1927)
     end
 
     it 'should calculate distance from a geocodable model' do
-      @san_francisco.distance_to(@saugatuck).should be_close(1927, 2)
-      @saugatuck.distance_to(@san_francisco).should be_close(1927, 2)
+      @san_francisco.distance_to(@saugatuck).should be_within(2).of(1927)
+      @saugatuck.distance_to(@san_francisco).should be_within(2).of(1927)
     end
 
     it 'should calculate distance in default miles' do
-      @san_francisco.distance_to(@saugatuck, :units => :miles).should be_close(1927, 2)
+      @san_francisco.distance_to(@saugatuck, :units => :miles).should be_within(2).of(1927)
     end
     
     it 'should calculate distance in default kilometers' do
-      @san_francisco.distance_to(@saugatuck, :units => :kilometers).should be_close(3101, 2)
+      @san_francisco.distance_to(@saugatuck, :units => :kilometers).should be_within(2).of(3101)
     end
     
     it 'should return nil with invalid geocode' do
@@ -261,7 +261,7 @@ describe ActsAsGeocodable do
   it "should find beyond with other units" do
     whitehouse = Vacation.origin('49406', :beyond => 3, :units => :kilometers).first
     whitehouse.should == @white_house
-    whitehouse.distance.to_f.should be_close(877.554975851074, 1)
+    whitehouse.distance.to_f.should be_within(1).of(877.554975851074)
   end
   
   it "should find nearest" do
@@ -292,12 +292,12 @@ describe ActsAsGeocodable do
   end
   
   it "can convert a string to a geocode" do
-    douglas_geocode = Factory(:douglas_geocode)
+    douglas_geocode = FactoryGirl.create(:douglas_geocode)
     Vacation.send(:location_to_geocode, '49406').should == douglas_geocode
   end
 
   it "can covert a numeric zip to a geocode" do
-    douglas_geocode = Factory(:douglas_geocode)
+    douglas_geocode = FactoryGirl.create(:douglas_geocode)
     Vacation.send(:location_to_geocode, 49406).should == douglas_geocode
   end
   
@@ -305,19 +305,20 @@ describe ActsAsGeocodable do
     Vacation.send(:location_to_geocode, @white_house).should == @white_house.geocode
   end
   
-  it "should run a callback after geocoding" do
-    location = CallbackLocation.new :address => "San Francisco"
-    location.geocoding.should be_nil
-    location.should_receive(:done_geocoding).once.and_return(true)
-    location.save!.should be_true
-  end
+  describe "callbacks" do
+    it "should run a callback after geocoding" do
+      location = CallbackLocation.new :address => "San Francisco"
+      location.geocoding.should be_nil
+      location.should_receive(:done_geocoding).once.and_return(true)
+      location.save!.should be_true
+    end
 
-  it "should not run callbacks after geocoding if the object is the same" do
-    location = CallbackLocation.create(:address => "San Francisco")
-    location.geocoding.should_not be_nil
-    location.should_not_receive(:done_geocoding)
-    location.save!.should be_true
+    it "should not run callbacks after geocoding if the object is the same" do
+      location = CallbackLocation.create(:address => "San Francisco")
+      location.geocoding.should_not be_nil
+      location.should_not_receive(:done_geocoding)
+      location.save!.should be_true
+    end
   end
-  
   
 end

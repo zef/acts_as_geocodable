@@ -1,5 +1,7 @@
 h1. acts_as_geocodable
 
+!https://secure.travis-ci.org/collectiveidea/acts_as_geocodable.png?branch=master!:https://travis-ci.org/collectiveidea/acts_as_geocodable
+
 acts_as_geocodable helps you build geo-aware applications. It automatically geocodes your models when they are saved, giving you the ability to search by location and calculate distances between records.
 
 *Beginning with version 2, we require Rails 3.  Use one of the 1.0.x tags to work with Rails 2.3.*
@@ -89,9 +91,40 @@ end</code></pre>
 
 Keep in mind that IP-based geocoding is not always accurate, and often will not return any results.
 
-h2. Development
+h2. Contributing
 
-Patches and suggestions are welcome!
+In the spirit of "free software":http://www.fsf.org/licensing/essays/free-sw.html, **everyone** is encouraged to help improve this project.
+
+Here are some ways *you* can contribute:
+
+* using alpha, beta, and prerelease versions
+* reporting bugs
+* suggesting new features
+* writing or editing documentation
+* writing specifications
+* writing code (**no patch is too small**: fix typos, add comments, clean up inconsistent whitespace)
+* refactoring code
+* closing "issues":https://github.com/collectiveidea/acts_as_geocodable/issues/
+* reviewing patches
+
+h2. Submitting an Issue
+
+We use the "GitHub issue tracker":https://github.com/collectiveidea/acts_as_geocodable/issues/ to track bugs
+and features. Before submitting a bug report or feature request, check to make sure it hasn't already
+been submitted. You can indicate support for an existing issuse by voting it up. When submitting a
+bug report, please include a "Gist":https://gist.github.com/ that includes a stack trace and any
+details that may be necessary to reproduce the bug, including your gem version, Ruby version, and
+operating system. Ideally, a bug report should include a pull request with failing specs.
+
+h2. Submitting a Pull Request
+
+1. Fork the project.
+2. Create a topic branch.
+3. Implement your feature or bug fix.
+4. Add specs for your feature or bug fix.
+5. Run @bundle exec rake@. If your changes are not 100% covered and passing, go back to step 4.
+6. Commit and push your changes.
+7. Submit a pull request. Please do not include changes to the gemspec, version, or history file. (If you want to create your own version for some reason, please do so in a separate commit.)
 
 h3. To Do
 
